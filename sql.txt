@@ -1,0 +1,606 @@
+SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('tablename') , get columns name 
+
+sp_help N'ath'  ### get info
+.                                             --------------TYPE DES DONNEES---------------
+
+Char (langeur dyalo fix) la3tinah char(10) o ktebna fih gher -abc- parex ay3mer chi lakher b espace
+Nchar :  declare @a Nchar(41)
+'        set @a = N'بارك'    kandiro had N darori
+'        print @a
+
+Varchar (largeur dyalo machi fix)
+Nvarchar : declare @a Nvarchar(41)
+'          set @a = N'بارك'    kandiro had N darori
+'          print @a
+-------------------------------------------------------------------------------------------------------------------------------------
+
+-alter for changing name DB
+Alter database DBName
+modify name = newDBName;
+
+.                                  ------------------- create table, alter table, drop table -------------------------
+Database Li an create fiha table : CR - new -> table
+
+create table NameDtable (
+adress nchar(123),
+name nchar(123)
+);
+
+drop table namedtable
+
+delete from Personne --supprimer tout les lignes
+truncate table Personne  --supprimer tout les lignes 
+far9 bin delete o truncate howa truncatefach katmsa7 les DONNEES katbda index mn lowel la kant 3andna Identity 
+
+.                                 ------------- Modification d'une table ALTER TABLE | ADD - ALTER - DROP ---------------
+
+--add column
+Alter table nameDtable
+Add sexe varchar(10)
+
+--Modification column
+Alter table nameDtable
+Alter column name varchar(20) not null
+
+--drop column
+Alter table nameDtable
+drop column name
+
+--add constraint
+Alter table nameDtable
+Add constraint ch_sexe check (column in ('Homme', 'Femme'))
+.                       OR
+ALTER TABLE nameDtable ADD CONSTRAINT cons1nt_ne check (column > 9);
+
+
+--delete constraint 🚨bach n delete table linked by another table should delete constraint 🚨
+Alter table Personne
+Drop constraint pk_Personne
+
+--Désactivation et Activation constraint 🚨(active o ndesactive kadar gher f constraint Check w foreign key)🚨
+Alter Table Personne
+Nocheck constraint ch_sexe
+Check
+
+------------------------------------------------------------------
+----insert f table values
+insert into nameDtable (name,city,mail)
+values ('hamza','casa','h@g.com');
+
+----Insertion par sélection
+insert into Table2
+select nomComplet, age
+from Table1
+
+----afficher nass li fchi city awla 3andhom nefs smiya
+select * from namedtable
+where city ='casa' (awla ndiro)  where city like '%a%' (h%= ya3ni katbda b H , %a%=ya3ni wast mnha A )
+
+----nmodifie chi area
+update nameDtable
+set city ='casablanca',zip='20000'
+where city='casa';
+
+----ndelete chi row
+delete from nameDtable
+where city='jadida'
+
+🚨 hna ankono 7adedna lih wahed La date naissance li at3tina between 16 w 25🚨
+create table nameDtable 
+(
+dateNaissance date not null check (datediff (year, dateNaissance, getdate()) between 16 and 25)
+)
+
+🚨 function like🚨 bach ndekhlo wahed numero tele parex ((( katkhdem gher f varchar)))
+telephone varchar(10) unique check(telephone like '0[5-7],[0-9],[0-9],[0-9],[0-9],[0-9],[0-9],[0-9],[0-9]')
+LIKE we use with them :
+_ : _a b7ala kan9olo chi lettre(n'import qu'il) mn wrah a 
+% : %A kan9olo tsali b A , a% tbda b A
+
+[] : [abc] a ou b ou C , [1-9] 1 ola 2 ...9
+SELECT * FROM Customers
+WHERE City LIKE '[bsp]%'; ya3ni l9a ay city katbda b (B ola S ola P)
+
+^ : not , h[^oa]t finds hit, but not hot and hat , darori kaydar f brackets
+
+.                                     --------------------------Relationalships----------------------------
+
+--One To Many : 
+set Primary key : when i select on Primery key that mean is not possible to write the same value in column
+        with coden: (in table code) costumerID int 🚨Primary key🚨
+ 
+Identity specification :yes , if i want increase the number and make him auto
+        with code : (in table code) costumerID int 🚨identity (1,1)🚨 (increment,seed)
+
+database diagram : kandiroh bach n linkiw chi column f chi table m3a column akher f table akher , bach dak column (foreign table key) mayfotch akber numbers li f (primary key table)
+        with code : (in table code) foreign key (columnLiBghina) references nameDtable (smiya column dyal tablo li ghaykon primary key table) 
+
+.                                              ------------------- constraint -------------------
+
+null : ALLOW EMPTY
+NOT null : NOT ALLOW EMPTY
+UNIQUE : B7al PK gher hiya allow null
+DEFAULT : syntax(constraint chiNAme DEFAULT 'dakchi li aykon default') ila madkhelch user data kadkhel default auto
+check : t7a9e9 lina mn data ,  syntax(constraint chiNAme check (column = hello) )
+
+.                                       ------------------------ Function /Grouping By ------------------------------
+
+select T.column , sum(T2.column2) insert intoNameLiBghinaYkonBelow , count(T2.column2) insert into NameLiBghinaYkonBelow from Table T
+join Table2 T2
+on T.column = T2.column2
+Group by T.column
+
+🚨--- hna ghay groupy lina l column o ghaydir 9edamo count l dakchi li m3awed
+select columnLiBghina, count(*) as 'numbre d'etudiant' from etudiant
+group by columnLiBghina
+
+🚨having katkhdem gher m3a group by, kan3tewha condition 
+group by nomVille
+having count(nomStagiaire) > 0
+
+count()
+sum(column)
+min(column)
+max(column)
+avg(column) La moyen
+
+🚨TOP : kandiroha bach n3ewlo ch7al mn row y affiche🚨
+select top 3 *
+from nameDtable
+
+--Mod : rest of 
+
+--right(clomun,number)b7ala ghadi yakhed mn column la kan name ayakhed akher number la derna right w awel number la derna left.
+
+.                                     ------------- ON DELETE (CASCADE, SET NULL, SET DEFAULT, NO ACTION) 
+.                                                   ON UPDATE (CASCADE, SET NULL, SET DEFAULT, NO ACTION) ------------------------
+
+🚨on delete cascade on update cascade : Lakena dayrin foreign key chi tablo related l tablo akher n9edo nmes7o o n update fihom 
+create table Personnel
+(
+idPersonnel int,
+nomPersonnel varchar (20),
+idDepartement int,
+constraint pk_Personnel primary key (idPersonnel),
+constraint fk_Personnel_Departement foreign key (idDepartement) references Departement (idDepartement) 🚨on delete cascade on update cascade🚨
+)
+
+🚨SET NULL :
+on updet o tbedel value in table related ay dir lina null f other results on delete same things
+
+
+🚨SET DEFAULT :
+kandiro default 3adi f syntax dyal column o fach kanmes7o ola kan upadte l value ra kadar default
+
+
+🚨NO action: 
+hia L case L3adiya li kaykon fiha L erreur
+
+
+.                                          ---------------------- jointure --------------------------
+
+🚨join:  join katjma3 tableau w ON katabe9 L condition b7al WHERE
+select *
+from Stagiaires join Villes
+on idVille = origine
+
+🚨left join: aybyen table li fel left o l codition mn table tani
+
+🚨right join:aybyen table li fel right o l codition mn table lowl
+
+🚨Full join: aybyen kolchi o lblayess li aykono khawin aydir lihom null 3ekss select * from li kat3awed data 
+
+🚨Self-Join: A self join is a regular join, but the table is joined with itself
+SELECT A.CustomerName AS CustomerName1, B.CustomerName AS CustomerName2, A.City
+FROM Customers A, Customers B
+WHERE A.CustomerID <> B.CustomerID  (<> not equal)
+AND A.City = B.City 
+ORDER BY A.City;
+
+OUTER JOIN : join kat affiche lina gher li 3andhom Relation m3a tableau lakhor fk 3ekss outer katbyen kolchi
+
+
+🌹example for set some null cell in column with self join🌹
+update a //(alias for land specified)
+set PropertyAddress = isnull(a.PropertyAddress,b.PropertyAddress)
+from land a join land b on a.ParcelID = b.ParcelID and a.UniqueID <> b.UniqueID
+where a.PropertyAddress is null
+
+.                                                   --------------- SQL UNION Operator----------------
+UNION kat 3red lina les deux column f column wahed without repetition
+UNION ALL b7alha ms kat3red lina 7ta repetition
+
+The UNION operator is used to combine the result-set of two or more SELECT statements.
+
+Every SELECT statement within UNION must have the same number of columns
+The   columns must also have similar data types
+The   columns in every SELECT statement must also be in the same order
+
+case:
+SELECT combined_column
+FROM (
+  SELECT staff_id AS combined_column FROM sales.staffs
+  UNION ALL
+  SELECT active AS combined_column FROM sales.staffs
+) AS subquery
+ORDER BY combined_column
+.                                                   --------------- is null , is not null --------------------
+
+ila not null mat affichihch
+select *
+from Table1
+where name is not null
+
+ila null mat affichihch
+select *
+from Table2
+where age is null
+
+.                                                   --------------- Alias -----------------
+
+SELECT CustomerName, Address + ',' + PostalCode + ' ' + City + ',' + Country AS Address
+FROM Customers;
+
+ay3tena parex column adress fih hamza,sidi momn,20400,casa,maroc
+
+.                                                  --------------- in , not in -----------------------
+The IN operator allows you to specify multiple values in a WHERE clause.
+
+    SELECT column_name(s)
+    FROM table_name
+    WHERE column_name IN (value1, value2, ...);
+
+    SELECT column_name(s)
+    FROM table_name
+    WHERE column_name IN (SELECT STATEMENT);
+
+.                                                 --------------- HAVING ----------------
+The HAVING clause was added to SQL because the WHERE keyword cannot be used with aggregate functions.
+
+SELECT COUNT(CustomerID), Country
+FROM Customers
+GROUP BY Country
+HAVING COUNT(CustomerID) > 5
+ORDER BY COUNT(CustomerID) DESC;
+
+.                                                  --------------- create view  ----------------
+
+view kat9der tsta3melha bach t affiche chi data
+syntax :
+create view name_libghina
+as select * from chi_table
+
+
+.                                                  -------------------  exist , Not exists ----------------------
+
+The EXISTS operator is used to test for the existence of any record in a subquery.
+
+The EXISTS operator returns TRUE if the subquery returns one or more records.
+
+.                                                  ----------------- All - Any ----------------------
+subquery return more than 1 value 
+
+all : 
+ANY :
+.                                           --------------- Variable ---------------
+
+--Declaration des variables
+declare @nom_var int
+--Affectation par valeur I
+select @nom_var = 10
+--Affectation par selection
+set @nom_var = (select min(datediff (year, dateNaissance, getdate ()))
+from Stagiaires)
+--Affichage
+print @nom_var
+Attention : sous requete qui retourne une resultat multiple
+
+
+.                                        ----------------- case (when,then) end -------------------
+
+kanfet7o case o kansedoha b end , wast mn case kan3tew l conditions when age > 18 then kteb liya 'adult'
+
+select nomStagiaire, datediff (year, dateNaissance, getdate ()) as 'age'
+case 
+        when datediff(year,dateNaissance,getdate()) <= 19 then 'categorie A'
+        when datediff(year,dateNaissance,getdate()) <= 22 then 'categorie B'
+        else 'categorie C'
+end
+from Stagiaires
+
+.                                          ---------------- CTE common table expression ---------------
+
+b7al view
+
+WITH cte as (select....................)
+
+
+.                                          ---------------- STORED PROCEDURES ------------------
+L
+
+CREATE PROCEDURES SMIYALIBGHINA
+AS
+BEGIN
+        select *from abc
+        where a=10
+END
+
+--bach n execute l PROCEDURE:
+        execute smiyaDyalprocedure
+        exec smiyaDyalprocedure
+
+--bach n modifier l PROCEDURE 
+    fichier programmability -> stored PROCEDURE -> L PROCEDUREli bghina , click right -> modify
+
+--bach nmsa7 procedure 
+    drop procedure namedyalha
+
+-- ADD PARAMETER TO PROCEDURE
+CREATE PROCEDURE SMIYALIBGHINA(@min_list_price AS DECIMAL)
+AS
+BEGIN
+    SELECT product_name FROM production.products
+    WHERE
+        list_price >= @min_list_price
+    ORDER BY
+        list_price;
+END;
+
+EXEC smiyaDyalprocedure 100; (100 HIYA L PARAMETRE)
+
+
+--Creating a stored procedure with multiple parameters
+CREATE PROCEDURE uspFindProducts(
+    @min_list_price AS DECIMAL
+    ,@max_list_price AS DECIMAL
+)
+AS...........
+
+EXECUTE uspFindProducts 900, 1000;
+
+--Using named parameters IN EXECUTION (BACH YKON L CODE WADE7 MZN)
+EXECUTE uspFindProducts 
+    @min_list_price = 900, 
+    @max_list_price = 1000;
+
+--Creating text parameters
+CREATE PROCEDURE uspFindProducts(
+    @min_list_price AS DECIMAL
+    ,@max_list_price AS DECIMAL
+    ,@name AS VARCHAR(max)
+).........
+EXECUTE uspFindProducts 
+    @min_list_price = 900, 
+    @max_list_price = 1000,
+    @name = 'Trek';
+
+--Creating optional parameters
+ALTER PROCEDURE uspFindProducts(
+    @min_list_price AS DECIMAL = 0
+    ,@max_list_price AS DECIMAL = 999999)
+    AS ..................
+
+
+
+.                                            ------------------ USER DEFINE FUNCTION ---------------------
+
+lfar9 bin function w procedure how 
+        Function darori t return value
+        Function n9der n call up f select statement
+
+---create function
+
+create function name_libghina (@par1 int, @par2 int) returns int
+as
+BEGIN
+        return (@par1 * 10) + @par2
+END
+
+select dbo.name_function(100,200)
+
+--dropping
+drop function nameDyalha
+
+.                                              ---------------------  RANKING  ---------------------
+
+--BACH NDIR WAHED COLUMN FIHA NUMBER DYAL KOLA ROW
+ROW_NUMBER() OVER (ORDER BY COLUMN)
+
+--Ghatb9a tzid b rank wahed kolma tbdel Lcharactere li fel column
+dense_rank() over (order by clomun)
+
+--ntile kandiro wast menha ra9m li bghina n9essmo 3lih les columnes 
+ntile(NUMBER) over (order by column)
+
+--rank ghatrteb lina 3la 7sab l column li 3tinaha ms ila kano chi cell 3andhom nefs L value ghadi t3tihom nefs ra9m e.g(2 2 2 5) ghadoz L 5 bcz 2 tanya o talta 7sbathom 
+rank() over(order by column)
+
+LEAD() : kanjibo biha L subsequent(تالي) value , n9der n select year
+lead(column) over (order by id_new)
+
+LAG() : kanjibo biha L previews value
+
+
+--partition by : kolma wsal l cells li mchabhin kay7seb mn 1 o ghadi 
+column  partition
+java    1
+java    2
+java    3
+css     1
+css     2
+
+.                                               ---------------- table variable -------------------
+e.g 
+
+DECLARE @product_table TABLE (
+    product_name VARCHAR(MAX) NOT NULL,
+    brand_id INT NOT NULL,
+    list_price DEC(11,2) NOT NULL
+);
+
+--insert into table
+INSERT INTO @product_table
+SELECT
+    product_name,
+    brand_id,
+    list_price
+FROM
+    production.products
+WHERE
+    category_id = 1;
+
+
+🚨kifach n use table m3a function🚨
+
+create function func_1 (@staff_1 int) 
+returns @table_1 table (name varchar(max))              //hana ma7tajinach ndiro declare l table 7a9ach creeinah wast mn function
+as
+begin
+        insert into @table_1
+	select first_name+' '+last_name as fullName from sales.staffs
+	where store_id = @staff_1
+	return
+end;
+
+select full_name, s.email from func_1 (1) n
+join sales.staffs s
+on n.full_name = s.first_name+' '+last_name
+
+🚨awla la mabghitch n3aref table🚨
+
+create function func_2 (@par1)
+returns table
+as
+return 
+        select * from orders_sales
+        where id = @par1
+
+
+
+`                                                 ---------------------  T-SQL Programming Constructs  -----------------------
+
+-------BEGIN END
+
+-------IF ELSE 
+
+-------BREAK 
+WHILE Boolean_expression
+BEGIN
+    -- statements
+   IF condition
+        BREAK;
+    -- other statements    
+END
+
+-------CONTINUE : kangolo lih ila wsal L 3 n9ez statement Li mn wra continue
+DECLARE @counter INT = 0;
+WHILE @counter < 5
+BEGIN
+    SET @counter = @counter + 1;
+    IF @counter = 3
+        CONTINUE;	
+    PRINT @counter;
+END
+ result : 1 2 4 5
+
+--------WHILE :
+DECLARE @counter1 INT = 1;
+WHILE @counter1 <= 5
+BEGIN
+    PRINT @counter1;
+    SET @counter1 = @counter1 + 1;
+END
+
+-------RETURN
+
+
+'                                               ------------------- TRIGGER -------------------
+
+
+'                                               -------------------- PIVOT ---------------------
+SELECT * FROM
+(
+    SELECT 
+        category_name, 
+        product_id,
+        model_year
+    FROM 
+        production.products p
+        INNER JOIN production.categories c 
+            ON c.category_id = p.category_id
+) tiliase 
+PIVOT(
+    COUNT(product_id) 
+    FOR category_name IN (
+        [Children Bicycles], 
+        [Comfort Bicycles], 
+        [Cruisers Bicycles], 
+        [Cyclocross Bicycles], 
+        [Electric Bikes], 
+        [Mountain Bikes], 
+        [Road Bikes])
+) AS pivot_table;
+
+
+------------------------------Function
+        -- ceiling : if the result 29.02 and we use ceiling the result will be 30
+        -- REPLACE : SELECT REPLACE('SQL Tutorial', 'T', 'M'); Result -> SQL MUMORIAL
+        -- Mode : ba9i L9isma
+        -- floor : if the result 29.92 and we use ceiling the result will be 29
+        -- ROUND : Round the number to 2 decimal places (SELECT ROUND(235.415, 2) AS RoundValue; result:235.41)
+        -- CAST : The CAST() function converts a value (of any type) into a specified datatype ; SELECT CAST(25.65 AS int);CAST(expression AS datatype(length))
+        -- convert : CONVERT(data_type(length), expression, style) 
+        -- CONCAT : SELECT CONCAT('W',4,'3Schools', '.com');
+        -- CONCAT_WS : The CONCAT_WS() function adds two or more strings together with a separator, CONCAT_WS(separator, string1, string2, ...., string_n) , SELECT CONCAT_WS('.', 'SQL', ' is', ' fun!');  SQL. IS. FUN!.
+    not support wirdcard    -- CHARINDEX :('a' , 'abcad' , 2) , (a howa L char li ay9aleb 3la index dyalo , 'a b c a d', hiya lblasa fin ay9leb 3la a , 2(optional) hiya mnin aybda y9aleb) ; 4
+    support wirdcard -- PATINDEX : PATINDEX('%[^0-9]%', zip)
+        -- SUBSTRING :('SQL SERVER', 5 , 6) ,'SQL SERVER' = HIYA LKELMA LI BGHINA N9AT3O MNHA , 5 = HIYA MNIN AYBDA , 6 HIYA CH7AL MN CHAR AYAKHED : RESULT = SERVER
+        -- ISNULL(column,'seconde') = isnull katgolih ila kan column khawi dir fih 'seconde' , ola n9edo ndiro fih 7ta column akhor
+        -- parsename(column,1) , parsename khass tkon sentence fih . tal 3 . e.g(sidi momen . casa. maroc . afric) ya3ni m9assma 3la 4 , o 1 tal 4 hiya blast kola part e.g parsename('sidi momen . casa. maroc . afric', 4) = sidi momn
+        -- datename(dw , column ) bach nkharjo days of week mn date
+        -- DATENAME(MONTH, YourDateColumn) month name 
+
+.                         ----DATE FUNCTION
+        -- DATEADD : DATEADD(DAY,5,GETDATE()) , dateadd katzid wahed number of days , 5 = days li anzido .
+        -- FORMAT (your_date_column, 'dd/MM/yyyy') , bach nbdel fromat dyal column
+        -- DATENAME(MONTH,COLUMN) , N9EDO NDIRO MONTH OR DAY OR YEAR
+        -- COALESCE(expression1, expression2, expression3) , The COALESCE() function in SQL returns the first non-null expression from the list of arguments. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+SQL Wildcard Characters ()
+
+
+
+
+
+
+
+
+
+
+
+
